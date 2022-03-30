@@ -46,6 +46,7 @@
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
 		</dependency>
     </dependencies>
 
@@ -66,6 +67,7 @@
 					</args>
 					<compilerPlugins>
 						<plugin>spring</plugin>
+						<plugin>jpa</plugin>
 					</compilerPlugins>
 				</configuration>
 				<dependencies>

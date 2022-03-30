@@ -21,30 +21,32 @@ class MessageService(private val repository: MessageRepository) {
         return repository.getById(id)
     }
 
-//    fun createMessage(dto: MessageInDto) {
-//        listMessages = listMessages.plus(
-//            MessageOutDto(
-//                id = listMessages.size + 1,
-//                date = dateNow,
-//                text = dto.text
-//            )
-//        ).toMutableList()
-//    }
+    fun createMessage(dtoIn: MessageInDto) {
+        repository.save(
+            MessageOutDto(
+                id = repository.findAll().size + 1,
+                date = dateNow,
+                text = dtoIn.text
+            ).convertMessageOutDto()
+        )
+    }
 
     fun deleteAll() {
         repository.deleteAll()
     }
 
-   fun deleteId(id: Int) {
-       repository.deleteById(id)
-   }
+    fun deleteId(id: Int) {
+        repository.deleteById(id)
+    }
 
-//    fun updateMessage(id: Int, dto: MessageInDto) {
-//        val message = findMessageById(id)
-//        listMessages = listMessages.minus(message).plus(MessageOutDto(
-//            id = id,
-//            date = dateNow,
-//            text = dto.text
-//        )).toMutableList()
-//    }
+    fun updateMessage(id: Int, dtoIn: MessageInDto) {
+        var message = findMessageById(id)
+        message = repository.save(
+            MessageOutDto(
+                id = id,
+                date = dateNow,
+                text = dtoIn.text
+            ).convertMessageOutDto()
+        )
+    }
 }

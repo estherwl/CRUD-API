@@ -1,7 +1,7 @@
 package com.example.demo.controller
 
 import com.example.demo.dto.`in`.MessageInDto
-import com.example.demo.dto.out.MessageOutDto
+import com.example.demo.entities.MessageEntity
 import com.example.demo.service.MessageService
 import org.springframework.web.bind.annotation.*
 
@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.*
 class MessageController(val service: MessageService) {
 
     @GetMapping
-    fun findAllMessages(): List<MessageOutDto> = service.findAllMessages()
+    fun findAllMessages(): MutableList<MessageEntity> = service.findAllMessages()
 
     @GetMapping("/{id}")
-    fun findMessageById(@PathVariable id: Int): List<MessageOutDto> {
+    fun findMessageById(@PathVariable id: Int): MessageEntity {
         return service.findMessageById(id)
     }
 
