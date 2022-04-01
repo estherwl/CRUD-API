@@ -27,11 +27,12 @@ class MessageControllerTest(
     }
 
     @Test
-    fun findMessageByIdWithSucess() {
-        mockMvc.get("/message/1")
+    fun findAllMessagesOrderedByAsc() {
+        mockMvc.get("/message/sortAsc")
             .andExpect {
                 status { isOk() }
                 content { contentType(MediaType.APPLICATION_JSON) }
+
             }
     }
 
@@ -57,6 +58,43 @@ class MessageControllerTest(
             MockMvcRequestBuilders
                 .post("/message")
                 .content("")
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun postAllMessagesWithSucess() {
+        val body = StringBuilder()
+        body.append("[")
+        body.append("{")
+        body.append("\"text\" : \"ola\" ")
+        body.append("}")
+        body.append(",")
+        body.append("{")
+        body.append("\"text\" : \"oi\" ")
+        body.append("}")
+        body.append("]")
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+                .post("/message/saveAll")
+                .content(body.toString())
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isOk)
+    }
+
+    @Test
+    fun postAllMessagesWithError() {
+        val body = StringBuilder()
+        body.append("{")
+        body.append("\"text\" : \"ola\" ")
+        body.append("}")
+        mockMvc.perform(
+            MockMvcRequestBuilders
+                .post("/message/saveAll")
+                .content(body.toString())
                 .contentType(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isBadRequest)

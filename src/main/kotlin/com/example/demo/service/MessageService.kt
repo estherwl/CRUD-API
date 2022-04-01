@@ -4,6 +4,7 @@ import com.example.demo.dto.`in`.MessageInDto
 import com.example.demo.dto.out.MessageOutDto
 import com.example.demo.entities.MessageEntity
 import com.example.demo.repository.MessageRepository
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -17,6 +18,16 @@ class MessageService(private val repository: MessageRepository) {
         return repository.findAll()
     }
 
+    fun findAllMessagesOrderByTextAsc(): MutableList<MessageEntity> {
+        val order = Sort.by(Sort.Direction.ASC, "text")
+        return repository.findAll(order)
+    }
+
+    fun findAllMessagesOrderByTextDesc(): MutableList<MessageEntity> {
+        val order = Sort.by(Sort.Direction.DESC, "text")
+        return repository.findAll(order)
+    }
+
     fun findMessageById(id: Int): MessageEntity {
         return repository.getById(id)
     }
@@ -24,11 +35,28 @@ class MessageService(private val repository: MessageRepository) {
     fun createMessage(dtoIn: MessageInDto) {
         repository.save(
             MessageOutDto(
-                id = repository.findAll().size + 1,
                 date = dateNow,
                 text = dtoIn.text
-            ).convertMessageOutDto()
+            ).convertMessageOutDtoToEntity()
         )
+    }
+
+    fun createAllMessages(listDtoIn: Iterable<MessageInDto>) {
+        val listEntity = convertListDtoToEntity(listDtoIn)
+        repository.saveAll(
+            listEntity.asIterable()
+        )
+    }
+
+    fun convertListDtoToEntity(listIn: Iterable<MessageInDto>): MutableList<MessageEntity> {
+        val listOut = mutableListOf<MessageEntity>()
+        listIn.map { messageInDto -> listOut.add(
+            MessageOutDto(
+                date = dateNow,
+                text = messageInDto.text
+            ).convertMessageOutDtoToEntity()
+        ) }
+        return listOut
     }
 
     fun deleteAll() {
@@ -43,10 +71,11 @@ class MessageService(private val repository: MessageRepository) {
         var message = findMessageById(id)
         message = repository.save(
             MessageOutDto(
-                id = id,
+                //id = id,
                 date = dateNow,
                 text = dtoIn.text
-            ).convertMessageOutDto()
+            ).convertMessageOutDtoToEntity()
         )
     }
+
 }

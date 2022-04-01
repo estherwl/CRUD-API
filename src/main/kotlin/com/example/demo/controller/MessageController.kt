@@ -12,6 +12,12 @@ class MessageController(val service: MessageService) {
     @GetMapping
     fun findAllMessages(): MutableList<MessageEntity> = service.findAllMessages()
 
+    @GetMapping("/sortAsc")
+    fun findAllMessagesOrderByTextAsc(): MutableList<MessageEntity> = service.findAllMessagesOrderByTextAsc()
+
+    @GetMapping("/sortDesc")
+    fun findAllMessagesOrderByTextDesc(): MutableList<MessageEntity> = service.findAllMessagesOrderByTextDesc()
+
     @GetMapping("/{id}")
     fun findMessageById(@PathVariable id: Int): MessageEntity {
         return service.findMessageById(id)
@@ -20,6 +26,11 @@ class MessageController(val service: MessageService) {
     @PostMapping
     fun postMessage(@RequestBody messageInDto: MessageInDto) {
         service.createMessage(messageInDto)
+    }
+
+    @PostMapping("/saveAll")
+    fun postAllMessages(@RequestBody listMessageInDto: Iterable<MessageInDto>) {
+        service.createAllMessages(listMessageInDto)
     }
 
     @DeleteMapping("/clear")
