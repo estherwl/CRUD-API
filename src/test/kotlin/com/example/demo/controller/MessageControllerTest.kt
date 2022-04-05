@@ -1,10 +1,14 @@
 package com.example.demo.controller
 
+import com.example.demo.entities.MessageEntity
+import com.example.demo.service.MessageService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
+import org.springframework.http.RequestEntity.get
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
@@ -28,12 +32,32 @@ class MessageControllerTest(
 
     @Test
     fun findAllMessagesOrderedByAsc() {
-        mockMvc.get("/message/sortAsc")
-            .andExpect {
-                status { isOk() }
-                content { contentType(MediaType.APPLICATION_JSON) }
+        val mockList: MutableList<MessageEntity> = mutableListOf(
+            MessageEntity(1, "05/04/2022", "aaa"),
+            MessageEntity(2, "05/04/2022", "bbb"))
 
-            }
+        mockMvc.perform(MockMvcRequestBuilders
+            .get("/message")
+            .content(mockList.toString())
+            .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect { mockList.sortedBy { mockList -> mockList.text } }
+            .andExpect(status().isOk)
+    }
+
+    @Test
+    fun findAllMessagesOrderedByDsc() {
+        val mockList: MutableList<MessageEntity> = mutableListOf(
+            MessageEntity(1, "05/04/2022", "aaa"),
+            MessageEntity(2, "05/04/2022", "bbb"))
+
+        mockMvc.perform(MockMvcRequestBuilders
+            .get("/message")
+            .content(mockList.toString())
+            .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect { mockList.sortedByDescending { mockList -> mockList.text } }
+            .andExpect(status().isOk)
     }
 
     @Test
