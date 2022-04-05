@@ -32,6 +32,8 @@ class MessageService(private val repository: MessageRepository) {
         return repository.getById(id)
     }
 
+    fun messageExist(id: Int) = repository.existsById(id)
+
     fun createMessage(dtoIn: MessageInDto) {
         repository.save(
             MessageOutDto(
