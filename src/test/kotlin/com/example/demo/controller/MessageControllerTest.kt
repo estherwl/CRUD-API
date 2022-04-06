@@ -1,16 +1,14 @@
 package com.example.demo.controller
 
 import com.example.demo.entities.MessageEntity
-import com.example.demo.service.MessageService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
-import org.springframework.http.RequestEntity.get
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
+import org.springframework.test.web.servlet.put
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -20,6 +18,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 class MessageControllerTest(
     @Autowired val mockMvc: MockMvc,
 ) {
+//TODO: criar métodos de teste que faltam pra completar todos endpoinst testados
+//TODO: criar constante para ID nao encontrado
 
     @Test
     fun findAllMessagesWithSucess() {
@@ -58,6 +58,14 @@ class MessageControllerTest(
         )
             .andExpect { mockList.sortedByDescending { mockList -> mockList.text } }
             .andExpect(status().isOk)
+    }
+
+    @Test
+    fun findMessageByIdNotFound(){
+        mockMvc.get("/message/{id}", 500)
+            .andExpect {
+                status { isNotFound() }
+            }
     }
 
     @Test
@@ -125,10 +133,41 @@ class MessageControllerTest(
     }
 
     @Test
+    fun updateByIdNotFound(){
+        val body = StringBuilder()
+        body.append("{")
+        body.append("\"text\" : \"ola\" ")
+        body.append("}")
+        mockMvc.perform(MockMvcRequestBuilders
+            .put("/message/{id}", 500)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .content(body.toString()))
+            .andExpect(status().isNotFound)
+    }
+
+    @Test
     fun deleteAllWithSucess() {
         mockMvc.delete("/message/clear")
             .andExpect {
                 status { isOk() }
+            }
+    }
+
+    @Test
+    fun deleteByIdWithSucess() {
+        mockMvc.delete("/message/1")
+                //adc message id1
+            .andExpect {
+                status { isOk() }
+            }
+    }
+
+    @Test
+    fun deleteByIdNotFound() {
+        mockMvc.delete("/message/{id}", 500)
+            .andExpect {
+                status { isNotFound() }
             }
     }
 

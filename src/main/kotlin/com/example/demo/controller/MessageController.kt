@@ -21,7 +21,7 @@ class MessageController(val service: MessageService) {
 
     @GetMapping("/{id}")
     fun findMessageById(@PathVariable id: Int): ResponseEntity<MessageEntity> {
-        if(service.messageExist(id)){
+        if (service.messageExist(id)) {
             return ResponseEntity.ok(service.findMessageById(id))
         }
         return ResponseEntity.notFound().build()
@@ -43,16 +43,22 @@ class MessageController(val service: MessageService) {
     }
 
     @DeleteMapping("/{id}")
-    fun deleteById(@PathVariable id: Int) {
-        service.deleteId(id)
+    fun deleteById(@PathVariable id: Int): ResponseEntity<Unit> {
+        if (service.messageExist(id)) {
+            return ResponseEntity.ok(service.deleteId(id))
+        }
+        return ResponseEntity.notFound().build()
     }
 
     @PutMapping("/{id}")
     fun updateById(
         @RequestBody messageInDto: MessageInDto,
         @PathVariable id: Int
-    ) {
-        service.updateMessage(id, messageInDto)
+    ):ResponseEntity<Unit> {
+        if(service.messageExist(id)){
+            return ResponseEntity.ok(service.updateMessage(id, messageInDto))
+        }
+        return ResponseEntity.notFound().build()
     }
 
 }
