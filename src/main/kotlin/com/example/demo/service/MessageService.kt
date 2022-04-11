@@ -73,7 +73,6 @@ class MessageService(private val repository: MessageRepository) {
         var message = findMessageById(id)
         message = repository.save(
             MessageOutDto(
-                //id = id,
                 date = dateNow,
                 text = dtoIn.text
             ).convertMessageOutDtoToEntity()
