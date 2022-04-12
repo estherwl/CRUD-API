@@ -6,25 +6,24 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
-import org.springframework.http.RequestEntity.delete
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+
 
 @SpringBootTest
 @AutoConfigureMockMvc
 class MessageControllerTest(
     @Autowired val mockMvc: MockMvc,
 ) {
-//TODO: criar métodos de teste que faltam pra completar todos endpoinst testados
-//TODO: criar constante para ID nao encontrado
-
     private val mockList: MutableList<MessageEntity> = mutableListOf(
         MessageEntity(1, "05/04/2022", "aaa"),
         MessageEntity(2, "05/04/2022", "bbb")
     )
+    private val mockMessage = MessageEntity(1, "05/04/2022", "aaa")
 
     private val id: Int = 500;
 
@@ -37,14 +36,14 @@ class MessageControllerTest(
             }
     }
 
-//    @Test
-//    fun findAllMessagesWithError() {
-//        mockMvc.get("/message")
-//            .andExpect {
-//                status { isNotFound() }
-//                content {  }
-//            }
-//    }
+    @Test
+    fun findAllMessagesWithError() {
+        mockMvc.perform(
+            MockMvcRequestBuilders
+                .get("/message")
+                .content(mockList.isEmpty().toString())
+        ).andExpect { status().isNotFound }
+    }
 
     @Test
     fun findAllMessagesOrderedByAsc() {
@@ -60,11 +59,6 @@ class MessageControllerTest(
 
     @Test
     fun findAllMessagesOrderedByDsc() {
-        val mockList: MutableList<MessageEntity> = mutableListOf(
-            MessageEntity(1, "05/04/2022", "aaa"),
-            MessageEntity(2, "05/04/2022", "bbb")
-        )
-
         mockMvc.perform(
             MockMvcRequestBuilders
                 .get("/message")
@@ -75,13 +69,16 @@ class MessageControllerTest(
             .andExpect(status().isOk)
     }
 
-//    @Test
-//    fun findMessageByIdWithSucess(){
-//        mockMvc.get("/message/{id}", id)
-//            .andExpect {
-//                status { isOk() }
-//            }
-//    }
+    @Test
+    fun findMessageByIdWithSucess() {
+        mockMvc.perform(
+            MockMvcRequestBuilders
+                .get("/message/{id}", 1)
+                .content(mockMessage.toString())
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect { status().isOk }
+    }
 
     @Test
     fun findMessageByIdNotFound() {
@@ -162,11 +159,10 @@ class MessageControllerTest(
 //        body.append("\"text\" : \"ola\" ")
 //        body.append("}")
 //        mockMvc.perform(MockMvcRequestBuilders
-//            .put("/message/{id}", id)
-//            .contentType(MediaType.APPLICATION_JSON)
-//            .accept(MediaType.APPLICATION_JSON)
-//            .content(body.toString()))
-//            .andExpect(status().isNotFound)
+//            .put("/message/{id}", 1)
+//            .content(mockMessage.toString())
+//            .contentType(MediaType.APPLICATION_JSON))
+//        .andExpect(status().isOk())
 //    }
 
     @Test
