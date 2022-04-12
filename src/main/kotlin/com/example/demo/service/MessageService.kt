@@ -2,60 +2,81 @@ package com.example.demo.service
 
 import com.example.demo.dto.`in`.MessageInDto
 import com.example.demo.dto.out.MessageOutDto
+import com.example.demo.entities.MessageEntity
+import com.example.demo.repository.MessageRepository
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @Service
-class MessageService(var listMessages: MutableList<MessageOutDto>) {
+class MessageService(private val repository: MessageRepository) {
     private val formatterDate: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
     private val dateNow: String = LocalDateTime.now().format(formatterDate)
 
-    init {
-        listMessages = mutableListOf(
-            MessageOutDto(1, dateNow, "Olá mundo!"),
-            MessageOutDto(2, dateNow, "Hello world!"),
-            MessageOutDto(3, dateNow, "¡Hola mundo!"),
-            MessageOutDto(4, dateNow, "Salut tout le monde!")
+    fun findAllMessages(): MutableList<MessageEntity> {
+        return repository.findAll()
+    }
+
+    fun findAllMessagesOrderByTextAsc(): MutableList<MessageEntity> {
+        val order = Sort.by(Sort.Direction.ASC, "text")
+        return repository.findAll(order)
+    }
+
+    fun findAllMessagesOrderByTextDesc(): MutableList<MessageEntity> {
+        val order = Sort.by(Sort.Direction.DESC, "text")
+        return repository.findAll(order)
+    }
+
+    fun findMessageById(id: Int): MessageEntity {
+        return repository.getById(id)
+    }
+
+    fun messageExist(id: Int) = repository.existsById(id)
+
+    fun createMessage(dtoIn: MessageInDto) {
+        repository.save(
+            MessageOutDto(
+                date = dateNow,
+                text = dtoIn.text
+            ).convertMessageOutDtoToEntity()
         )
     }
 
-    fun findAllMessages(): List<MessageOutDto> {
-        return listMessages
+    fun createAllMessages(listDtoIn: Iterable<MessageInDto>) {
+        val listEntity = convertListDtoToEntity(listDtoIn)
+        repository.saveAll(
+            listEntity.asIterable()
+        )
     }
 
-    fun findMessageById(id: Int): List<MessageOutDto> {
-        return listMessages.filter { MessageDto -> MessageDto.id == id }
-    }
-
-    fun createMessage(dto: MessageInDto) {
-        listMessages = listMessages.plus(
+    fun convertListDtoToEntity(listIn: Iterable<MessageInDto>): MutableList<MessageEntity> {
+        val listOut = mutableListOf<MessageEntity>()
+        listIn.map { messageInDto -> listOut.add(
             MessageOutDto(
-                id = listMessages.size + 1,
                 date = dateNow,
-                text = dto.text
-            )
-        ).toMutableList()
+                text = messageInDto.text
+            ).convertMessageOutDtoToEntity()
+        ) }
+        return listOut
     }
 
     fun deleteAll() {
-        listMessages.clear()
+        repository.deleteAll()
     }
 
-   @Throws(ArrayIndexOutOfBoundsException::class)
-   fun deleteId(id: Int) {
-       if(id > listMessages.size) {
-           throw ArrayIndexOutOfBoundsException("Index not found")
-       }
-       listMessages.removeAt(id - 1)
+    fun deleteId(id: Int) {
+        repository.deleteById(id)
     }
 
-    fun updateMessage(id: Int, dto: MessageInDto) {
-        val message = findMessageById(id)
-        listMessages = listMessages.minus(message).plus(MessageOutDto(
-            id = id,
-            date = dateNow,
-            text = dto.text
-        )).toMutableList()
+    fun updateMessage(id: Int, dtoIn: MessageInDto) {
+        var message = findMessageById(id)
+        message = repository.save(
+            MessageOutDto(
+                date = dateNow,
+                text = dtoIn.text
+            ).convertMessageOutDtoToEntity()
+        )
     }
+
 }

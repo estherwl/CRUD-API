@@ -1,3 +1,5 @@
 package com.example.demo.dto.`in`
 
-data class MessageInDto(var text: String)
+data class MessageInDto(var text: String){
+
+}

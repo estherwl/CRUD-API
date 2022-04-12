@@ -1,0 +1,10 @@
+server:
+  port: 8888
+spring:
+  datasource:
+    url: jdbc:h2:mem:/data/demo
+    username: sa
+    password:
+    driverClassname: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
