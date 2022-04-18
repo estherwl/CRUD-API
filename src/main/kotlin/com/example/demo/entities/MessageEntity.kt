@@ -1,6 +1,5 @@
 package com.example.demo.entities
 
-import java.util.*
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
@@ -9,9 +8,9 @@ import javax.persistence.Id
 @Entity
 class MessageEntity(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int,
-    val date: String,
-    val text: String
+    var id: Int,
+    var date: String,
+    var text: String
 ) {
     constructor() : this(0, "", "")
 }

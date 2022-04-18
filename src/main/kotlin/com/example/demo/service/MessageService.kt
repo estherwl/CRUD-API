@@ -37,6 +37,7 @@ class MessageService(private val repository: MessageRepository) {
     fun createMessage(dtoIn: MessageInDto) {
         repository.save(
             MessageOutDto(
+                id = MessageEntity().id,
                 date = dateNow,
                 text = dtoIn.text
             ).convertMessageOutDtoToEntity()
@@ -54,6 +55,7 @@ class MessageService(private val repository: MessageRepository) {
         val listOut = mutableListOf<MessageEntity>()
         listIn.map { messageInDto -> listOut.add(
             MessageOutDto(
+                id = listOut.indexOf(MessageEntity()),
                 date = dateNow,
                 text = messageInDto.text
             ).convertMessageOutDtoToEntity()
@@ -69,14 +71,13 @@ class MessageService(private val repository: MessageRepository) {
         repository.deleteById(id)
     }
 
-    fun updateMessage(id: Int, dtoIn: MessageInDto) {
-        var message = findMessageById(id)
-        message = repository.save(
-            MessageOutDto(
-                date = dateNow,
-                text = dtoIn.text
-            ).convertMessageOutDtoToEntity()
-        )
+    fun updateMessage(id: Int, messageInDto: MessageInDto) {
+        var message = repository.getById(id)
+        message = repository.save(MessageOutDto(
+            id = message.id,
+            date = dateNow,
+            text = messageInDto.text
+        ).convertMessageOutDtoToEntity())
     }
 
 }
