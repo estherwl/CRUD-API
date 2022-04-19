@@ -33,7 +33,7 @@ class MessageControllerTest(
     private val mockMessage = MessageEntity(1, "05/04/2022", "aaa")
 
     @Test
-    fun `findAllMessagesWithSucess`() {
+    fun `find all messages with success`() {
         mockMvc.get("/message")
             .andExpect {
                 status { isOk() }
@@ -42,7 +42,7 @@ class MessageControllerTest(
     }
 
     @Test
-    fun findAllMessagesWithError() {
+    fun `find all messages with error`() {
         mockMvc.perform(
             MockMvcRequestBuilders
                 .get("/message")
@@ -51,7 +51,7 @@ class MessageControllerTest(
     }
 
     @Test
-    fun findAllMessagesOrderedByAsc() {
+    fun `find all messages ordered by Asc`() {
         mockMvc.perform(
             MockMvcRequestBuilders
                 .get("/message")
@@ -63,7 +63,7 @@ class MessageControllerTest(
     }
 
     @Test
-    fun findAllMessagesOrderedByDsc() {
+    fun `find all messages ordered by Dsc`() {
         mockMvc.perform(
             MockMvcRequestBuilders
                 .get("/message")
@@ -75,7 +75,7 @@ class MessageControllerTest(
     }
 
     @Test
-    fun findMessageByIdWithSucess() {
+    fun `find message by id with success`() {
         mockMvc.perform(
             MockMvcRequestBuilders
                 .get("/message/{id}", 1)
@@ -86,7 +86,7 @@ class MessageControllerTest(
     }
 
     @Test
-    fun findMessageByIdNotFound() {
+    fun `find message by id - not found`() {
         mockMvc.get("/message/{id}", 1)
             .andExpect {
                 status { isNotFound() }
@@ -94,7 +94,7 @@ class MessageControllerTest(
     }
 
     @Test
-    fun postMessageWithSucess() {
+    fun `post message with success`() {
         val body = StringBuilder()
         body.append("{")
         body.append("\"text\" : \"ola mundo\" ")
@@ -110,7 +110,7 @@ class MessageControllerTest(
     }
 
     @Test
-    fun postMessageWithError() {
+    fun `post message with error`() {
         mockMvc.perform(
             MockMvcRequestBuilders
                 .post("/message")
@@ -121,7 +121,7 @@ class MessageControllerTest(
     }
 
     @Test
-    fun postAllMessagesWithSucess() {
+    fun `post all messages with success`() {
         val body = StringBuilder()
         body.append("[")
         body.append("{")
@@ -143,7 +143,7 @@ class MessageControllerTest(
     }
 
     @Test
-    fun postAllMessagesWithError() {
+    fun `post all messages with error`() {
         val body = StringBuilder()
         body.append("{")
         body.append("\"text\" : \"ola\" ")
@@ -158,7 +158,7 @@ class MessageControllerTest(
     }
 
     @Test
-    fun updateByIdWithSucess() {
+    fun `update message by id with success`() {
         doReturn(true).`when`(messageService).messageExist(1)
 
         val body = StringBuilder()
@@ -176,7 +176,7 @@ class MessageControllerTest(
     }
 
     @Test
-    fun updateByIdNotFound() {
+    fun `update message by id - not found`() {
         val body = StringBuilder()
         body.append("{")
         body.append("\"text\" : \"ola\" ")
@@ -192,7 +192,7 @@ class MessageControllerTest(
     }
 
     @Test
-    fun deleteAllWithSucess() {
+    fun `delete all messages with success`() {
         mockMvc.delete("/message/clear")
             .andExpect {
                 status { isOk() }
@@ -200,7 +200,7 @@ class MessageControllerTest(
     }
 
     @Test
-    fun deleteAllWithError() {
+    fun `delete all messages with error`() {
         mockMvc.perform(
             MockMvcRequestBuilders
                 .delete("/message/clear")
@@ -211,7 +211,7 @@ class MessageControllerTest(
     }
 
     @Test
-    fun deleteByIdWithSucess() {
+    fun `delete message by id with success`() {
         mockMvc.perform(
             MockMvcRequestBuilders
                 .delete("/message/{id}", 1)
@@ -222,7 +222,7 @@ class MessageControllerTest(
     }
 
     @Test
-    fun deleteByIdNotFound() {
+    fun `delete message by id - not found`() {
         mockMvc.delete("/message/{id}", 1)
             .andExpect {
                 status { isNotFound() }
