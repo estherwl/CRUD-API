@@ -7,6 +7,7 @@ API RESTful desenvolvida para o estudo de Kotlin, Spring e testes unitários. O 
 * Kotlin
 * Spring
 * JUnit5
+* Mockito
 * Maven
 * JPA
 * Banco em memória H2
