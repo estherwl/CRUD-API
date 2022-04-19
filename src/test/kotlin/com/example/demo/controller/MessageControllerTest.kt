@@ -33,7 +33,7 @@ class MessageControllerTest(
     private val mockMessage = MessageEntity(1, "05/04/2022", "aaa")
 
     @Test
-    fun findAllMessagesWithSucess() {
+    fun `findAllMessagesWithSucess`() {
         mockMvc.get("/message")
             .andExpect {
                 status { isOk() }
